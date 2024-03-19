@@ -1,5 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
+import Link from "next/link";
 import styles from "./page.module.css";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   return (
@@ -8,6 +11,9 @@ export default function Home() {
         <a className={styles.nav_link}>Works</a>
         <a className={styles.nav_link}>Blog</a>
         <a className={styles.nav_link}>Contacts</a>
+        <Link className={styles.nav_link} href={`/login`}>
+          Sign In
+        </Link>
       </nav>
       <div className={styles.wrapper}>
         <div className={styles.user_content}>

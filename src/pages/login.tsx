@@ -5,7 +5,6 @@ import styles from "../styles.module.css";
 import Link from "next/link";
 import authSlice from "@/redux/slices/authSlice";
 import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => void;

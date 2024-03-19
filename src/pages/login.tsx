@@ -1,15 +1,40 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import React, { useState } from "react";
 import styles from "../styles.module.css";
 import Link from "next/link";
+import authSlice from "@/redux/slices/authSlice";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => void;
 }
 
+// const login = async (username: string, password: string): Promise<void> => {
+//   try {
+//     const response = await fetch("/login", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ username, password }),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Failed to log in");
+//     }
+
+//     console.log("User logged in successfully");
+//   } catch (error) {
+//     console.error("Error logging in:", error.message);
+//   }
+// };
+
 const Login: React.FC<LoginFormProps> = ({ onSubmit }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +60,11 @@ const Login: React.FC<LoginFormProps> = ({ onSubmit }) => {
           required
           className={styles.input}
         />
-        <button type="submit" className={styles.button}>
-          Sign In
-        </button>
+        <Link href={`/`}>
+          <button type="submit" className={styles.button}>
+            Sign In
+          </button>
+        </Link>
         <Link href={`/registration`}>
           <button className={styles.button}>Sign Up</button>
         </Link>

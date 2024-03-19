@@ -1,10 +1,31 @@
 "use client";
 import React, { useState } from "react";
 import styles from "../styles.module.css";
+import Link from "next/link";
 
 interface RegistrationFormProps {
   onSubmit: (email: string, password: string) => void;
 }
+
+// const register = async (username: string, password: string): Promise<void> => {
+//   try {
+//     const response = await fetch("/register", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ username, password }),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Failed to register");
+//     }
+
+//     console.log("User registered successfully");
+//   } catch (error) {
+//     console.error("Error registering:", error.message);
+//   }
+// };
 
 const Registration: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
   const [email, setEmail] = useState("");
@@ -34,9 +55,11 @@ const Registration: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           required
           className={styles.input}
         />
-        <button type="submit" className={styles.button}>
-          Sign Up
-        </button>
+        <Link href={`/`}>
+          <button type="submit" className={styles.button}>
+            Sign Up
+          </button>
+        </Link>
       </form>
     </div>
   );

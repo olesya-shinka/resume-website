@@ -21,10 +21,6 @@ const Login: React.FC = () => {
       setError("Неверный email");
       return;
     }
-    if (!auth.currentUser) {
-      setError("Неверный пароль");
-      return;
-    }
     
     signInWithEmailAndPassword(auth, email, password)
       .then(({ user }) => {

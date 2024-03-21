@@ -1,48 +1,48 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import React, { useState } from "react";
-import styles from "../styles.module.css";
 import Link from "next/link";
-import authSlice from "@/redux/slices/authSlice";
-import { useDispatch } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import { setUser } from "@/redux/slices/authSlice";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import styles from "../styles.module.css";
 
-interface LoginFormProps {
-  onSubmit: (email: string, password: string) => void;
-}
-
-// const login = async (username: string, password: string): Promise<void> => {
-//   try {
-//     const response = await fetch("/login", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ username, password }),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error("Failed to log in");
-//     }
-
-//     console.log("User logged in successfully");
-//   } catch (error) {
-//     console.error("Error logging in:", error.message);
-//   }
-// };
-
-const Login: React.FC<LoginFormProps> = ({ onSubmit }) => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const router = useRouter();
+  const [error, setError] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onSubmit(email, password);
+    const auth = getAuth();
+    if (!auth.currentUser?.email) {
+      setError("Неверный email");
+      return;
+    }
+    if (!auth.currentUser) {
+      setError("Неверный пароль");
+      return;
+    }
+    
+    signInWithEmailAndPassword(auth, email, password)
+      .then(({ user }) => {
+        dispatch(
+          setUser({
+            email: user.email,
+            id: user.uid,
+            token: user.accessToken,
+          })
+        );
+        router.push(`/mainpage`);
+      })
+      .catch((error) => setError("Неверный email или пароль"));
   };
 
   return (
     <div className={styles.form_box}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form}>
         <input
           type="email"
           placeholder="Email"
@@ -59,13 +59,17 @@ const Login: React.FC<LoginFormProps> = ({ onSubmit }) => {
           required
           className={styles.input}
         />
-        <Link href={`/`}>
-          <button type="submit" className={styles.button}>
-            Sign In
-          </button>
-        </Link>
+        <p className={styles.error}>{error}</p>
+        <button type="submit" className={styles.button} onClick={handleLogin}>
+          Sign In
+        </button>
         <Link href={`/registration`}>
           <button className={styles.button}>Sign Up</button>
+        </Link>
+        <Link href={`/`}>
+          <button type="submit" className={styles.button}>
+            Cancel
+          </button>
         </Link>
       </form>
     </div>

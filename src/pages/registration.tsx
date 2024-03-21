@@ -1,44 +1,68 @@
-"use client";
 import React, { useState } from "react";
 import styles from "../styles.module.css";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import Link from "next/link";
+import store from "@/redux/store";
+import { useRouter } from "next/router";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
+} from "firebase/auth";
+import { setUser } from "@/redux/slices/authSlice";
 
-interface RegistrationFormProps {
-  onSubmit: (email: string, password: string) => void;
-}
+const Registration: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const [error, setError] = useState<string>("");
 
-// const register = async (username: string, password: string): Promise<void> => {
-//   try {
-//     const response = await fetch("/register", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ username, password }),
-//     });
+  const checkUserExists = async (email: string) => {
+    const auth = getAuth();
+    try {
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+      if (signInMethods.length > 0) {
+        console.log("User exists");
+      } else {
+        console.log("User does not exist");
+      }
+    } catch (error) {
+      setError("Такой пользователь уже зарегистрирован");
+    }
+  };
 
-//     if (!response.ok) {
-//       throw new Error("Failed to register");
-//     }
-
-//     console.log("User registered successfully");
-//   } catch (error) {
-//     console.error("Error registering:", error.message);
-//   }
-// };
-
-const Registration: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleRegister = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onSubmit(email, password);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Неверный формат email");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Пароль должен содержать минимум 6 символов");
+      return;
+    }
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(({ user }) => {
+        console.log(user);
+        dispatch(
+          setUser({
+            email: user.email,
+            id: user.uid,
+            token: user.accessToken,
+          })
+        );
+        router.push(`/mainpage`);
+      })
+      .catch((email) => checkUserExists(email));
   };
 
   return (
     <div className={styles.form_box}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form}>
         <input
           type="email"
           placeholder="Email"
@@ -55,9 +79,17 @@ const Registration: React.FC<RegistrationFormProps> = ({ onSubmit }) => {
           required
           className={styles.input}
         />
+        <p className={styles.error}>{error}</p>
+        <button
+          type="button"
+          className={styles.button}
+          onClick={handleRegister}
+        >
+          Sign Up
+        </button>
         <Link href={`/`}>
-          <button type="submit" className={styles.button}>
-            Sign Up
+          <button type="button" className={styles.button}>
+            Cancel
           </button>
         </Link>
       </form>

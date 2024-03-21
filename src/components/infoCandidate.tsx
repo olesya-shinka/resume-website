@@ -20,7 +20,7 @@ export const InfoCandidate = () => {
         <button className={styles.btn_download_resume}>Download Resume</button>
       </div>
       <div className={styles.user_photo_box}>
-        <img src="photo-user.png" alt="photo" />
+        <img className={styles.photo} src="photo-user.png" alt="photo" />
       </div>
     </div>
   );

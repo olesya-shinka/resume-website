@@ -19,7 +19,7 @@
   color: #000000;
 }
 
-.name{
+.name {
   font-size: 14px;
   color: #FF6464;
 }
@@ -35,6 +35,12 @@
   padding-right: 148px;
   padding-top: 150px;
   padding-bottom: 60px;
+}
+
+.photo {
+  -webkit-box-shadow: -33px 40px 0px -8px rgba(237, 247, 250, 0.2);
+  -moz-box-shadow: -33px 40px 0px -8px rgba(237, 247, 250, 0.2);
+  box-shadow: -33px 40px 0px -8px rgba(237, 247, 250, 0.2);
 }
 
 .about_user {}
